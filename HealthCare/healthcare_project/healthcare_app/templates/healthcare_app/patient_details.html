@@ -1,0 +1,179 @@
+{% extends 'healthcare_app/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center fw-bold text-primary animated-title">🔍 Patient Details</h2>
+    <p class="text-muted text-center animated-subtitle">Viewing details for <strong>{{ patient.username }}</strong></p>
+
+    <!-- 🩺 Medical History -->
+    <div class="ai-card mt-3 fade-in">
+        <h4 class="text-info">📋 Medical History</h4>
+        <p><strong>Medical Conditions:</strong> {{ patient_history.medical_conditions|default:"No data available" }}</p>
+        <p><strong>Allergies:</strong> {{ patient_history.allergies|default:"No data available" }}</p>
+        <p><strong>Medications:</strong> {{ patient_history.medications|default:"No data available" }}</p>
+        <p><strong>Surgeries:</strong> {{ patient_history.surgeries|default:"No data available" }}</p>
+    </div>
+
+    <!-- 📂 Patient Reports -->
+    <div class="ai-card mt-3 fade-in">
+        <h4 class="text-warning">📂 Uploaded Reports</h4>
+        {% for report in reports %}
+            <div class="d-flex justify-content-between align-items-center report-item">
+                <span><strong> * {{ report.report_name }}</strong></span>
+                <a href="{{ report.report_pdf.url }}" target="_blank" class="ai-btn ai-blue">📑 View Report</a>
+            </div>
+            <hr>
+        {% empty %}
+            <p class="text-muted">No reports uploaded yet.</p>
+        {% endfor %}
+    </div>
+
+    <!-- 💊 Prescriptions -->
+    <div class="ai-card mt-3 fade-in">
+        <h4 class="text-success">💊 Prescriptions</h4>
+        {% for prescription in prescriptions %}
+            <p><strong>Date:</strong> {{ prescription.date_issued }}</p>
+            <p><strong>Diagnosis:</strong> {{ prescription.diagnosis }}</p>
+            <p><strong>Prescribed Medicines:</strong> {{ prescription.prescribed_medicines }}</p>
+            <hr>
+        {% empty %}
+            <p class="text-muted">No prescriptions found.</p>
+        {% endfor %}
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="{% url 'doctor_dashboard' %}" class="ai-btn ai-gray">🔙 Back to Dashboard</a>
+    </div>
+</div>
+
+<style>
+    /* Animated Title and Subtitle with CSS */
+    .animated-title {
+        opacity: 0;
+        animation: fadeIn 1s ease-out forwards;
+    }
+
+    .animated-subtitle {
+        opacity: 0;
+        animation: fadeIn 1.2s ease-out forwards;
+        animation-delay: 0.3s;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Fade-In for Cards */
+    .fade-in {
+        opacity: 0;
+        animation: fadeInCard 0.8s ease-out forwards;
+    }
+
+    @keyframes fadeInCard {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .fade-in:nth-child(1) { animation-delay: 0.2s; }
+    .fade-in:nth-child(2) { animation-delay: 0.4s; }
+    .fade-in:nth-child(3) { animation-delay: 0.6s; }
+
+    /* AI Card Styling */
+    .ai-card, .report-item {
+        background: rgba(255, 255, 255, 0.2); /* Transparent white */
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        position: relative;
+        overflow: hidden;
+        border: 1px solid #ddd;
+        padding: 20px;
+    }
+
+    .ai-card::before, .report-item::before {
+        content: none !important;
+        display: none !important;
+    }
+
+    .ai-card h4 {
+        margin-bottom: 15px;
+        font-weight: 600;
+    }
+
+    .ai-card p, .report-item span {
+        font-size: 1rem;
+        color: #333;
+    }
+
+    .report-item {
+        padding: 10px 15px;
+        margin-bottom: 10px;
+    }
+
+    .report-item:last-child hr {
+        display: none; /* Remove last hr */
+    }
+
+    /* AI Styled Buttons */
+    .ai-btn {
+        display: inline-block;
+        padding: 10px 18px;
+        font-size: 15px;
+        font-weight: bold;
+        border-radius: 10px;
+        text-decoration: none;
+        transition: all 0.3s ease-in-out;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+    /* Button Colors */
+    .ai-blue {
+        background: #007bff;
+    }
+    .ai-blue:hover {
+        background: #0056b3;
+        transform: scale(1.05);
+    }
+
+    .ai-gray {
+        background: #6c757d;
+    }
+    .ai-gray:hover {
+        background: #5a6268;
+        transform: scale(1.05);
+    }
+
+    /* Responsive Layout */
+    @media (max-width: 768px) {
+        .ai-card {
+            padding: 15px;
+        }
+
+        .ai-btn {
+            width: 100%;
+            text-align: center;
+        }
+
+        .report-item {
+            flex-direction: column;
+            gap: 10px;
+            text-align: center;
+        }
+    }
+</style>
+{% endblock %}

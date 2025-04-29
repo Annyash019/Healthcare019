@@ -1,0 +1,175 @@
+{% extends "healthcare_app/base.html" %}
+{% block title %}My Orders - MediAI{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Header Section -->
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-dark display-5">📦 My Orders</h2>
+        <p class="text-muted lead">Track your medicine purchases and order status.</p>
+    </div>
+
+    <!-- Orders List -->
+    <div class="row mt-4" id="order-list">
+        {% if orders %}
+            {% for order in orders %}
+                <div class="col-lg-6 col-md-12 mb-4">
+                    <div class="card order-card shadow-sm">
+                        <div class="order-info">
+                            <h5 class="order-id">🩺 {{ order.medicine }}</h5>
+                            <p><strong>Ordered On:</strong> {{ order.order_date|date:"M d, Y" }}</p>
+                            <p><strong>Quantity:</strong> {{ order.quantity }}</p>
+                            <p><strong>Total Price:</strong> <span class="text-success">₹{{ order.total_price }}</span></p>
+                            <!-- Order Status -->
+                            <p class="mt-2 order-status">
+                                <strong>Status:</strong> 
+                                {% if order.status == "pending" %}
+                                    <span class="badge bg-warning text-dark">Pending</span>
+                                {% elif order.status == "confirmed" %}
+                                    <span class="badge bg-primary">Confirmed</span>
+                                {% elif order.status == "shipped" %}
+                                    <span class="badge bg-info text-dark">Shipped</span>
+                                {% elif order.status == "delivered" %}
+                                    <span class="badge bg-success">Delivered</span>
+                                {% elif order.status == "cancelled" %}
+                                    <span class="badge bg-danger">Cancelled</span>
+                                {% endif %}
+                            </p>
+                            <!-- Progress Bar -->
+                            <div class="progress-container">
+                                <div class="progress-bar 
+                                    {% if order.status == 'pending' %}status-pending
+                                    {% elif order.status == 'confirmed' %}status-confirmed
+                                    {% elif order.status == 'shipped' %}status-shipped
+                                    {% elif order.status == 'delivered' %}status-delivered
+                                    {% else %}status-cancelled{% endif %}">
+                                </div>
+                            </div>
+                            <!-- Uncomment and style this if you want a track button -->
+                            {% comment %}
+                            <a href="#" class="btn btn-track mt-3">Track Order</a>
+                            {% endcomment %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <p class="text-center text-muted py-5">No orders found. Start shopping now!</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+/* General Container Styling */
+.container {
+    max-width: 1200px; /* Slightly wider for better layout */
+}
+
+/* Order Card */
+.order-card {
+    border-radius: 12px;
+    background: #fff;
+    padding: 25px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e9ecef;
+    position: relative;
+    overflow: hidden; /* Ensures content stays within rounded corners */
+}
+
+.order-card:hover {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+    transform: translateY(-5px); /* Subtle lift effect */
+}
+
+/* Order Info */
+.order-info {
+    flex-grow: 1;
+}
+
+.order-id {
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: #ff9900; /* Amazon-inspired orange */
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.order-info p {
+    margin: 5px 0;
+    font-size: 0.95rem;
+    color: #495057;
+}
+
+.order-info p strong {
+    color: #212529;
+}
+
+/* Status Badge */
+.order-status .badge {
+    font-size: 0.85rem;
+    padding: 5px 10px;
+    border-radius: 20px;
+}
+
+/* Progress Bar */
+.progress-container {
+    width: 100%;
+    background-color: #e9ecef;
+    border-radius: 15px;
+    height: 12px;
+    margin-top: 15px;
+    overflow: hidden; /* Ensures progress bar stays within bounds */
+}
+
+.progress-bar {
+    height: 100%;
+    border-radius: 15px;
+    transition: width 0.5s ease-in-out;
+}
+
+/* Status Colors */
+.status-pending { background-color: #ffc107; width: 20%; }
+.status-confirmed { background-color: #007bff; width: 40%; }
+.status-shipped { background-color: #17a2b8; width: 70%; }
+.status-delivered { background-color: #28a745; width: 100%; }
+.status-cancelled { background-color: #dc3545; width: 100%; opacity: 0.7; }
+
+/* Track Button (Uncomment if needed) */
+.btn-track {
+    background: #ff9900;
+    color: #fff;
+    font-weight: 600;
+    border-radius: 6px;
+    padding: 8px 16px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+.btn-track:hover {
+    background: #e68a00;
+    color: #fff;
+    transform: scale(1.05);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .order-card {
+        padding: 15px;
+    }
+    .order-id {
+        font-size: 1.1rem;
+    }
+    .order-info p {
+        font-size: 0.9rem;
+    }
+    .progress-container {
+        height: 10px;
+    }
+}
+</style>
+{% endblock %}
